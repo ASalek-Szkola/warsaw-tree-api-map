@@ -132,13 +132,13 @@ label {
 .nolimit input[type="checkbox"]:checked::after {
   content: "";
   position: absolute;
-  left: 4px;
-  top: 3px;
-  width: 6px;
+  left: 50%;
+  top: 45%;
+  width: 5px;
   height: 9px;
   border: solid #fff;
   border-width: 0 2px 2px 0;
-  transform: rotate(42deg);
+  transform: translate(-50%, -50%) rotate(45deg);
 }
 
 input {
@@ -154,6 +154,14 @@ input {
 input:focus {
   border-color: var(--accent);
   outline: 3px solid rgba(36, 107, 74, 0.16);
+}
+
+input:disabled {
+  background: #f1f3f1;
+  color: #99a39d;
+  cursor: not-allowed;
+  border-color: var(--line);
+  opacity: 0.7;
 }
 
 .actions {
