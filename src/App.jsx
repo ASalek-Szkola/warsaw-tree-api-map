@@ -60,11 +60,23 @@ function App() {
       raw: record,
       lat: Number.isFinite(lat) ? lat : null,
       lon: Number.isFinite(lon) ? lon : null,
-      species: pick(record, ["gatunek", "gatunek_nazwa", "nazwa_lacinska", "rodzaj"]),
+      species: pick(record, ["gatunek", "gatunek_nazwa", "rodzaj"]),
+      speciesLatin: pick(record, ["gatunek_1", "nazwa_lacinska"]),
       district: pick(record, ["dzielnica", "district"]),
-      address: pick(record, ["adres", "lokalizacja", "ulica", "miejsce", "adr_es"]),
+      address: pick(record, ["adres", "ulica", "miejsce", "adr_es"]),
+      addressNumber: pick(record, ["numer_adres"]),
+      location: pick(record, ["lokalizacja"]),
       height: pick(record, ["wysokosc", "wysokosc_m", "height"]),
       health: pick(record, ["stan_zdrowia", "stan", "kondycja"]),
+      circumference: pick(record, ["pnie_obwod"]),
+      crownDiameter: pick(record, ["srednica_k"]),
+      ageDays: pick(record, ["wiek_w_dni"]),
+      measurementDate: pick(record, ["data_wyk_pom"]),
+      inventoryNumber: pick(record, ["numer_inw"]),
+      entity: pick(record, ["jednostka"]),
+      miasto: pick(record, ["miasto"]),
+      x_pl2000: record.x_pl2000 || "-",
+      y_pl2000: record.y_pl2000 || "-",
       id_obrysu: record.id_obrysu || null,
       type: resourceType
     };
@@ -129,10 +141,20 @@ function App() {
           geometry: { type: "Point", coordinates: [t.lon, t.lat] },
           properties: {
             gatunek: t.species,
+            gatunek_lacina: t.speciesLatin,
             dzielnica: t.district,
             adres: t.address,
+            nr_adres: t.addressNumber,
+            lokalizacja: t.location,
             wysokosc: t.height,
+            obwod: t.circumference,
+            srednica_korony: t.crownDiameter,
             stan_zdrowia: t.health,
+            wiek_dni: t.ageDays,
+            data_pomiaru: t.measurementDate,
+            nr_inw: t.inventoryNumber,
+            jednostka: t.entity,
+            id_obrysu: t.id_obrysu,
             source: t.raw,
           },
         })),
@@ -200,12 +222,23 @@ function App() {
           {records.filter(t => t.lat !== null && t.lon !== null).map((t, idx) => (
             <CircleMarker key={idx} center={[t.lat, t.lon]} radius={t.type === 'GROUPS' ? 10 : 6} color={t.type === 'GROUPS' ? "#2a4d69" : "#184b34"} weight={2} fillColor={t.type === 'GROUPS' ? "#4b86b4" : "#36a46c"} fillOpacity={0.78}>
               <Popup>
-                <div className="popup-title">{t.species} {t.id_obrysu ? `(Grupa: ${t.id_obrysu})` : ''}</div>
+                <div className="popup-title">
+                  {t.species} 
+                  {t.speciesLatin !== '-' && <span style={{ fontStyle: 'italic', fontSize: '0.9em', opacity: 0.8 }}> ({t.speciesLatin})</span>}
+                  {t.id_obrysu ? ` (Grupa: ${t.id_obrysu})` : ''}
+                </div>
                 <div className="popup-meta">
-                  {t.district}<br />
-                  {t.address}<br />
-                  Wysokosc: {t.height}<br />
-                  Stan: {t.health}
+                  <strong>Dzielnica:</strong> {t.district}<br />
+                  <strong>Adres:</strong> {t.address} {t.addressNumber !== '-' ? t.addressNumber : ''}<br />
+                  {t.location !== '-' && <><strong>Lokalizacja:</strong> {t.location}<br /></>}
+                  <hr style={{ margin: '8px 0', border: '0', borderTop: '1px solid #eee' }} />
+                  <strong>Wysokość:</strong> {t.height} m<br />
+                  <strong>Obwód pnia:</strong> {t.circumference} cm<br />
+                  <strong>Średnica korony:</strong> {t.crownDiameter} m<br />
+                  <strong>Stan:</strong> {t.health}<br />
+                  <strong>Wiek:</strong> {t.ageDays} dni<br />
+                  <small style={{ display: 'block', marginTop: '4px', opacity: 0.6 }}>Data pomiaru: {t.measurementDate}</small>
+                  <small style={{ display: 'block', opacity: 0.6 }}>Nr inw: {t.inventoryNumber}</small>
                 </div>
               </Popup>
             </CircleMarker>
@@ -223,25 +256,42 @@ function App() {
             <thead>
               <tr>
                 <th>Gatunek</th>
-                <th>Dzielnica</th>
-                <th>Adres / lokalizacja</th>
-                <th>Wysokosc</th>
+                <th>Lokalizacja / Adres</th>
+                <th>Wys. (m)</th>
+                <th>Obwód (cm)</th>
+                <th>Korona (m)</th>
                 <th>Stan</th>
+                <th>Wiek (dni)</th>
+                <th>Data pomiaru</th>
+                <th>Nr inw.</th>
                 <th>WGS84</th>
               </tr>
             </thead>
             <tbody>
               {records.length === 0 ? (
-                <tr><td colSpan="6" className="empty">Wybierz parametry i pobierz dane.</td></tr>
+                <tr><td colSpan="10" className="empty">Wybierz parametry i pobierz dane.</td></tr>
               ) : (
                 records.map((t, idx) => (
                   <tr key={idx}>
-                    <td>{t.species}</td>
-                    <td>{t.district}</td>
-                    <td>{t.address}</td>
+                    <td>
+                      <div style={{ fontWeight: '500' }}>{t.species} {t.id_obrysu ? `(G: ${t.id_obrysu})` : ''}</div>
+                      <small style={{ opacity: 0.6, fontStyle: 'italic' }}>{t.speciesLatin !== '-' ? t.speciesLatin : ''}</small>
+                    </td>
+                    <td>
+                      <div>{t.district}</div>
+                      <small style={{ opacity: 0.8 }}>{t.address} {t.addressNumber !== '-' ? t.addressNumber : ''}</small>
+                      {t.location !== '-' && <div style={{ fontSize: '0.85em', color: '#666' }}>({t.location})</div>}
+                    </td>
                     <td>{t.height}</td>
+                    <td>{t.circumference}</td>
+                    <td>{t.crownDiameter}</td>
                     <td>{t.health}</td>
-                    <td>{t.lat !== null && t.lon !== null ? `${t.lat.toFixed(6)}, ${t.lon.toFixed(6)}` : "-"}</td>
+                    <td>{t.ageDays}</td>
+                    <td>{t.measurementDate}</td>
+                    <td>{t.inventoryNumber}</td>
+                    <td style={{ fontSize: '0.85em', fontFamily: 'monospace' }}>
+                      {t.lat !== null && t.lon !== null ? `${t.lat.toFixed(5)}, ${t.lon.toFixed(5)}` : "-"}
+                    </td>
                   </tr>
                 ))
               )}
