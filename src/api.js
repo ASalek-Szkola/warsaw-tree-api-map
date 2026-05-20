@@ -1,9 +1,12 @@
-const RESOURCE_ID = "ed6217dd-c8d0-4f7b-8bed-3b7eb81a95ba";
+const RESOURCES = {
+  TREES: "ed6217dd-c8d0-4f7b-8bed-3b7eb81a95ba",
+  GROUPS: "913856f7-f71b-4638-abe2-12df14334e1a"
+};
 const API_URL = "/api/warsaw/api/action/datastore_search";
 
-export const buildApiUrl = ({ district, query, limit, offset }) => {
+export const buildApiUrl = ({ resourceType, district, query, limit, offset }) => {
   const params = new URLSearchParams();
-  params.set("resource_id", RESOURCE_ID);
+  params.set("resource_id", RESOURCES[resourceType] || RESOURCES.TREES);
   if (Number.isFinite(limit)) params.set("limit", String(limit));
   if (Number.isFinite(offset) && offset > 0) params.set("offset", String(offset));
   if (district) params.set("filters", JSON.stringify({ dzielnica: district }));
@@ -12,14 +15,14 @@ export const buildApiUrl = ({ district, query, limit, offset }) => {
   return `${API_URL}?${params.toString()}`;
 };
 
-export const fetchPagedRecords = async ({ district, query, onProgress }) => {
+export const fetchPagedRecords = async ({ resourceType, district, query, onProgress }) => {
   const pageLimit = 100000; // API Warszawy obsługuje bardzo duże limity w jednym żądaniu
   let offset = 0;
   let allRecords = [];
   let total = null;
 
   while (true) {
-    const urlPart = buildApiUrl({ district, query, limit: pageLimit, offset });
+    const urlPart = buildApiUrl({ resourceType, district, query, limit: pageLimit, offset });
     
     if (onProgress) {
         onProgress({

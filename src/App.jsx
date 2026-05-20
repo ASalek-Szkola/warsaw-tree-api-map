@@ -31,6 +31,7 @@ function MapBoundsSetter({ records }) {
 }
 
 function App() {
+  const [resourceType, setResourceType] = useState("TREES");
   const [district, setDistrict] = useState("");
   const [query, setQuery] = useState("");
   const [limit, setLimit] = useState(50);
@@ -61,9 +62,11 @@ function App() {
       lon: Number.isFinite(lon) ? lon : null,
       species: pick(record, ["gatunek", "gatunek_nazwa", "nazwa_lacinska", "rodzaj"]),
       district: pick(record, ["dzielnica", "district"]),
-      address: pick(record, ["adres", "lokalizacja", "ulica", "miejsce"]),
+      address: pick(record, ["adres", "lokalizacja", "ulica", "miejsce", "adr_es"]),
       height: pick(record, ["wysokosc", "wysokosc_m", "height"]),
       health: pick(record, ["stan_zdrowia", "stan", "kondycja"]),
+      id_obrysu: record.id_obrysu || null,
+      type: resourceType
     };
   };
 
@@ -74,6 +77,7 @@ function App() {
     setRecords([]);
 
     const params = {
+      resourceType,
       district: district.trim(),
       query: query.trim(),
       limit: noLimit ? undefined : Math.min(Math.max(limit, 1), 100000),
@@ -86,6 +90,7 @@ function App() {
       let rawRecords = [];
       if (noLimit) {
         rawRecords = await fetchPagedRecords({ 
+          resourceType,
           district: params.district, 
           query: params.query,
           onProgress: ({ offset, total, url }) => {
@@ -153,6 +158,13 @@ function App() {
 
         <form className="filters" onSubmit={loadTrees}>
           <label>
+            Typ zasobu
+            <select value={resourceType} onChange={(e) => setResourceType(e.target.value)} style={{ padding: '11px', borderRadius: '7px', border: '1px solid var(--line)', background: '#fbfcfb', font: 'inherit' }}>
+              <option value="TREES">Pojedyncze drzewa</option>
+              <option value="GROUPS">Grupy drzew</option>
+            </select>
+          </label>
+          <label>
             Dzielnica
             <input value={district} onChange={(e) => setDistrict(e.target.value)} placeholder="np. Wola" />
           </label>
@@ -186,9 +198,9 @@ function App() {
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a>' />
           <MapBoundsSetter records={records} />
           {records.filter(t => t.lat !== null && t.lon !== null).map((t, idx) => (
-            <CircleMarker key={idx} center={[t.lat, t.lon]} radius={6} color="#184b34" weight={2} fillColor="#36a46c" fillOpacity={0.78}>
+            <CircleMarker key={idx} center={[t.lat, t.lon]} radius={t.type === 'GROUPS' ? 10 : 6} color={t.type === 'GROUPS' ? "#2a4d69" : "#184b34"} weight={2} fillColor={t.type === 'GROUPS' ? "#4b86b4" : "#36a46c"} fillOpacity={0.78}>
               <Popup>
-                <div className="popup-title">{t.species}</div>
+                <div className="popup-title">{t.species} {t.id_obrysu ? `(Grupa: ${t.id_obrysu})` : ''}</div>
                 <div className="popup-meta">
                   {t.district}<br />
                   {t.address}<br />
