@@ -76,7 +76,7 @@ function App() {
     const params = {
       district: district.trim(),
       query: query.trim(),
-      limit: noLimit ? undefined : Math.min(Math.max(limit, 1), 500),
+      limit: noLimit ? undefined : Math.min(Math.max(limit, 1), 100000),
     };
 
     const previewUrl = buildApiUrl(params);
@@ -93,7 +93,7 @@ function App() {
             setStatus(
               total === null
                 ? `Pobieram dane (offset ${offset})...`
-                : `Pobieram dane (${Math.min(offset + 1000, total)} / ${total})...`
+                : `Pobieram dane (${Math.min(offset + 100000, total)} / ${total})...`
             );
           }
         });
@@ -162,7 +162,7 @@ function App() {
           </label>
           <label>
             Limit
-            <input type="number" value={limit} onChange={(e) => setLimit(parseInt(e.target.value))} disabled={noLimit} min="1" max="500" />
+            <input type="number" value={limit} onChange={(e) => setLimit(parseInt(e.target.value))} disabled={noLimit} min="1" max="100000" />
           </label>
           <label className="nolimit">
             <input type="checkbox" checked={noLimit} onChange={(e) => setNoLimit(e.target.checked)} />

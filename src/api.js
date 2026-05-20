@@ -13,7 +13,7 @@ export const buildApiUrl = ({ district, query, limit, offset }) => {
 };
 
 export const fetchPagedRecords = async ({ district, query, onProgress }) => {
-  const pageLimit = 1000;
+  const pageLimit = 100000; // API Warszawy obsługuje bardzo duże limity w jednym żądaniu
   let offset = 0;
   let allRecords = [];
   let total = null;
@@ -40,7 +40,7 @@ export const fetchPagedRecords = async ({ district, query, onProgress }) => {
 
     if (!records.length) break;
     allRecords = allRecords.concat(records);
-    offset += pageLimit;
+    offset += records.length;
 
     if (total !== null && offset >= total) break;
   }
