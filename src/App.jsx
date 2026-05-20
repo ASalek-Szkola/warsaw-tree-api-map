@@ -175,7 +175,12 @@ function App() {
         <div className="title-block">
           <p className="eyebrow">API UM Warszawa</p>
           <h1>Drzewa w Warszawie</h1>
-          <p className="lead">Testowy podglad danych z endpointu <code>datastore_search</code>.</p>
+          <p className="lead">Testowy podgląd danych z endpointu <code>datastore_search</code>.</p>
+          <p style={{ fontSize: '0.8rem', marginTop: '4px' }}>
+            <a href="https://pl.doczz.net/doc/1897859/drzewa---api-um-warszawa" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: '500' }}>
+              ↗ Zobacz dokumentację źródłową API
+            </a>
+          </p>
         </div>
 
         <form className="filters" onSubmit={loadTrees}>
