@@ -1,6 +1,8 @@
 const RESOURCES = {
   TREES: "ed6217dd-c8d0-4f7b-8bed-3b7eb81a95ba",
-  GROUPS: "913856f7-f71b-4638-abe2-12df14334e1a"
+  GROUPS: "913856f7-f71b-4638-abe2-12df14334e1a",
+  SHRUBS: "0b1af81f-247d-4266-9823-693858ad5b5d",
+  FORESTS: "75bedfd5-6c83-426b-9ae5-f03651857a48",
 };
 const API_URL = "/api/warsaw/api/action/datastore_search";
 

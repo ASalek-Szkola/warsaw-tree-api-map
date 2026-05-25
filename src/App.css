@@ -24,11 +24,70 @@ body {
   background: var(--bg);
 }
 
+a {
+  color: inherit;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+.page-shell {
+  min-height: 100vh;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.topbar-brand {
+  display: grid;
+  gap: 2px;
+}
+
+.topbar-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tab-button {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 14px;
+  background: #f8faf8;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.tab-button:hover {
+  background: #eff4ef;
+  color: var(--ink);
+}
+
+.tab-button.active {
+  background: var(--accent-soft);
+  border-color: #bdd4c5;
+  color: var(--accent-dark);
+}
+
 .app-shell {
   display: grid;
   grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
   grid-template-rows: auto minmax(360px, 1fr);
-  min-height: 100vh;
+  min-height: calc(100vh - 70px);
 }
 
 .control-panel,
@@ -63,7 +122,7 @@ p {
 }
 
 h1 {
-  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-size: clamp(2rem, 5vw, 3rem);
   line-height: 1;
 }
 
@@ -84,6 +143,21 @@ code {
   font-size: 0.9em;
 }
 
+.source-link {
+  margin-top: 2px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.source-link a {
+  text-decoration: none;
+}
+
+.source-link a:hover {
+  text-decoration: underline;
+}
+
 .filters {
   display: grid;
   gap: 16px;
@@ -101,13 +175,9 @@ label {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: var(--muted);
-  font-size: 0.9rem;
-  font-weight: 700;
 }
 
 .nolimit input[type="checkbox"] {
-  /* reset native checkbox visuals */
   -webkit-appearance: none;
   appearance: none;
   width: 18px;
@@ -141,26 +211,27 @@ label {
   transform: translate(-50%, -50%) rotate(45deg);
 }
 
-input {
+input,
+select {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: 7px;
   padding: 11px 12px;
   color: var(--ink);
   background: #fbfcfb;
-  font: inherit;
 }
 
-input:focus {
+input:focus,
+select:focus {
   border-color: var(--accent);
   outline: 3px solid rgba(36, 107, 74, 0.16);
 }
 
-input:disabled {
+input:disabled,
+select:disabled {
   background: #f1f3f1;
   color: #99a39d;
   cursor: not-allowed;
-  border-color: var(--line);
   opacity: 0.7;
 }
 
@@ -178,7 +249,6 @@ button {
   padding: 11px 14px;
   color: #fff;
   background: var(--accent);
-  font: inherit;
   font-weight: 800;
   cursor: pointer;
 }
@@ -229,12 +299,6 @@ button.secondary:hover {
   min-height: 420px;
 }
 
-#map {
-  width: 100%;
-  height: 100%;
-  min-height: 420px;
-}
-
 .results-panel {
   grid-column: 1 / -1;
   border-top: 1px solid var(--line);
@@ -247,11 +311,6 @@ button.secondary:hover {
   align-items: center;
   padding: 18px 24px;
   border-bottom: 1px solid var(--line);
-}
-
-#count {
-  color: var(--muted);
-  font-weight: 700;
 }
 
 .table-wrap {
@@ -296,13 +355,59 @@ td {
   font-weight: 800;
 }
 
+.popup-latin {
+  font-style: italic;
+  font-size: 0.9em;
+  opacity: 0.8;
+}
+
 .popup-meta {
   color: #4d5a51;
   font-size: 0.88rem;
   line-height: 1.35;
 }
 
+.popup-meta hr {
+  margin: 8px 0;
+  border: 0;
+  border-top: 1px solid #eee;
+}
+
+.popup-meta small {
+  display: block;
+  margin-top: 4px;
+  opacity: 0.7;
+}
+
+.species-cell {
+  font-weight: 500;
+}
+
+.latin-cell {
+  opacity: 0.6;
+  font-style: italic;
+}
+
+.address-cell {
+  opacity: 0.8;
+}
+
+.location-cell {
+  font-size: 0.85em;
+  color: #666;
+}
+
+.coords-cell {
+  font-size: 0.85em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+
 @media (max-width: 860px) {
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .app-shell {
     grid-template-columns: 1fr;
     grid-template-rows: auto 60vh auto;
@@ -320,6 +425,18 @@ td {
 }
 
 @media (max-width: 520px) {
+  .topbar {
+    padding: 14px 16px;
+  }
+
+  .topbar-tabs {
+    width: 100%;
+  }
+
+  .tab-button {
+    flex: 1 1 0;
+  }
+
   .actions {
     grid-template-columns: 1fr;
   }
